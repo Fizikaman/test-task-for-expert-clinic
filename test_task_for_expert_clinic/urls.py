@@ -17,7 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from test_task_for_expert_clinic import yasg
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("API/", include("user_app.urls")),
 ]
+
+urlpatterns += yasg.urlpatterns
