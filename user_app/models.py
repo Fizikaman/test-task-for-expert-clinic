@@ -8,7 +8,9 @@ class User(models.Model):
     last_name = models.CharField(max_length=255, verbose_name="Фамилия", blank=True, null=True)
     middle_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="Отчество")
     birth_date = models.DateField(verbose_name="Дата рождения", blank=True, null=True)
-    passport_number = models.CharField(max_length=15, verbose_name="Номер паспорта", blank=True, null=True, unique=True)
+    passport_number = models.CharField(max_length=10, verbose_name="Номер паспорта", blank=True, null=True, unique=True,
+                                       validators=[RegexValidator(regex='^[0-9]{10}$',
+                                                                  message='Введите правильные серию и номер паспорта.')])
     place_of_birth = models.CharField(max_length=255, verbose_name="Место рождения", blank=True, null=True)
     phone = models.CharField(
         max_length=11, verbose_name="Телефон", null=True, blank=True, unique=True,
