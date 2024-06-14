@@ -1,11 +1,14 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+
 from .models import User
 from .serializers import UserSerializer
 
 
 class UserCreateView(generics.CreateAPIView):
-    """Контроллера для создания пользователя"""
+    """Контроллера для создания пользователя
+    /API/users/"""
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -16,7 +19,8 @@ class UserCreateView(generics.CreateAPIView):
 
 
 class UserDetailView(generics.RetrieveAPIView):
-    """Контроллер для просмотра инфы о юзере по его id"""
+    """Контроллер для просмотра инфы о юзере по его id
+    /API/users/<int:id>/"""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'id'
@@ -26,7 +30,7 @@ class UserSearchView(generics.ListAPIView):
     """Контроллер для поиска юзера по - фамилия, имя, отчество, телефон, email.
      Пример API запроса с 2-мя и более фильтрами:
             ?first_name=<Петя>&last_name=<Петров>
-            /API/v2/wiki/materials/?first_name=Петя&last_name=Петров
+            /API/users/search/?first_name=Петя&last_name=Петров
      """
     queryset = User.objects.all()
     serializer_class = UserSerializer

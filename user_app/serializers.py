@@ -5,18 +5,24 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        exclude = ()
 
     def validate(self, data):
         request = self.context.get('request')
         device = request.headers.get('x-Device')
 
         if device == 'mail':
-            if not data.get('first_name') or not data.get('email'):
-                raise serializers.ValidationError("Имя и email обязательны для устройства 'mail'.")
+            required_fields = ['first_name', 'email']
+            for field in required_fields:
+                if field not in data:
+                    raise serializers.ValidationError(f"{field} обязательно для устройства 'mail'.")
+            return data
         elif device == 'mobile':
-            if not data.get('phone'):
-                raise serializers.ValidationError("Номер телефона обязателен для устройства 'mobile'.")
+            required_fields = ['phone']
+            for field in required_fields:
+                if field not in data:
+                    raise serializers.ValidationError(f"{field} обязателен для устройства 'mobile'.")
+            return data
         elif device == 'web':
             required_fields = [
                 'last_name', 'first_name',
@@ -24,9 +30,8 @@ class UserSerializer(serializers.ModelSerializer):
                 'place_of_birth', 'phone', 'registration_address'
             ]
             for field in required_fields:
-                if not data.get(field):
-                    raise serializers.ValidationError(f"Поле {field} обязательно для устройства 'web'.")
+                if field not in data:
+                    raise serializers.ValidationError(f"{field} обязательно для устройства 'web'.")
+            return data
         else:
             raise serializers.ValidationError("Неверное значение заголовка 'x-Device'.")
-
-        return data
