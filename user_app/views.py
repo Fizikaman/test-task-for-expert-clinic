@@ -1,14 +1,18 @@
-from rest_framework import generics, status
+from rest_framework import generics
 from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
 
 from .models import User
 from .serializers import UserSerializer
 
 
 class UserCreateView(generics.CreateAPIView):
-    """Контроллера для создания пользователя
-    /API/users/"""
+    """Контроллер для создания пользователя через разные девайсы
+    На данный endpoint /API/users/ необходимо передать заголовок 'x-Device' с возможными
+    значениями - mail, mobile, web.
+    Для каждого заголовка свои обязательные поля:
+    mail - first_name, email
+    mobile - phone
+    web - last_name, first_name, birth_date, passport_number, place_of_birth, phone, registration_address"""
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -27,8 +31,8 @@ class UserDetailView(generics.RetrieveAPIView):
 
 
 class UserSearchView(generics.ListAPIView):
-    """Контроллер для поиска юзера по - фамилия, имя, отчество, телефон, email.
-     Пример API запроса с 2-мя и более фильтрами:
+    """Контроллер для поиска юзера по следующим параметрам - фамилия, имя, отчество, телефон, email.
+     Пример API запроса с 2-мя и более параметрами:
             ?first_name=<Петя>&last_name=<Петров>
             /API/users/search/?first_name=Петя&last_name=Петров
      """
