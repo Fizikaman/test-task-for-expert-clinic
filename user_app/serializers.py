@@ -38,16 +38,17 @@ class UserSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         request = self.context.get('request')
-        device = request.headers.get('x-Device')
-
         representation = super().to_representation(instance)
 
-        devices_to_filter = {'mail', 'mobile', 'web'}
+        # только для POST-запросов
+        if request and request.method == 'POST':
+            device = request.headers.get('x-Device')
+            devices_to_filter = {'mail', 'mobile', 'web'}
 
-        if device in devices_to_filter:
-            initial_data = request.data
-            fields_to_include = set(initial_data.keys())
-            # Возвращаем только те поля, которые были в запросе
-            representation = {field: value for field, value in representation.items() if field in fields_to_include}
+            if device in devices_to_filter:
+                initial_data = request.data
+                fields_to_include = set(initial_data.keys())
+                # Возвращаем только те поля, которые были в запросе
+                representation = {field: value for field, value in representation.items() if field in fields_to_include}
 
         return representation
